@@ -10,6 +10,8 @@ import android.view.View;
 import android.view.ViewGroup;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 
 public class MainActivity extends ActionBarActivity {
@@ -58,16 +60,25 @@ public class MainActivity extends ActionBarActivity {
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
                                  Bundle savedInstanceState) {
+
+
+            // Once the root view for the Fragment has been created, it's time to fill
+            // the ListView with some dummy data.
+
+            // Create some dummy data for the ListView, Here's a sample weekly
+            // represented as "day, weather, high/low"
+
+            String[] data = {
+                    "Today - Sunny - 31/17",
+                    "Tomorrow - Foggy - 21/8",
+                    "Weds - Cloudy - 22/17",
+                    "Thurs - Asteroids - 18/11",
+                    "Fri - Heavy Rain - 21/10",
+                    "Sat - HELP TRAPPED IN WEATHERSTATION - 23/18",
+                    "Sun - Sunny - 20/7"
+            };
+            List<String> weekForecast = new ArrayList<>(Arrays.asList(data));
             View rootView = inflater.inflate(R.layout.fragment_main, container, false);
-
-            ArrayList<String> fakeData = new ArrayList<>();
-            fakeData.add("Today - Sunny - 88/63");
-            fakeData.add("Tomorrow - Foggy - 70/46");
-            fakeData.add("Weds - Cloudy - 72/63");
-            fakeData.add("Thurs - Rainy - 64/51");
-            fakeData.add("Fri - Foggy - 70/46");
-            fakeData.add("Fri - Sunny - 76/68");
-
             return rootView;
         }
     }
