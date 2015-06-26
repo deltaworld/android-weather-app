@@ -1,13 +1,15 @@
 package com.example.android.sunshine.app;
 
-import android.support.v7.app.ActionBarActivity;
-import android.support.v4.app.Fragment;
 import android.os.Bundle;
+import android.support.v4.app.Fragment;
+import android.support.v7.app.ActionBarActivity;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+
+import java.util.ArrayList;
 
 
 public class MainActivity extends ActionBarActivity {
@@ -57,6 +59,15 @@ public class MainActivity extends ActionBarActivity {
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
                                  Bundle savedInstanceState) {
             View rootView = inflater.inflate(R.layout.fragment_main, container, false);
+
+            ArrayList<String> fakeData = new ArrayList<>();
+            fakeData.add("Today - Sunny - 88/63");
+            fakeData.add("Tomorrow - Foggy - 70/46");
+            fakeData.add("Weds - Cloudy - 72/63");
+            fakeData.add("Thurs - Rainy - 64/51");
+            fakeData.add("Fri - Foggy - 70/46");
+            fakeData.add("Fri - Sunny - 76/68");
+
             return rootView;
         }
     }
