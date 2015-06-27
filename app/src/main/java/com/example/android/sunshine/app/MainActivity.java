@@ -61,7 +61,7 @@ public class MainActivity extends ActionBarActivity {
         @Override
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
                                  Bundle savedInstanceState) {
-
+            View rootView = inflater.inflate(R.layout.fragment_main, container, false);
 
             // Once the root view for the Fragment has been created, it's time to fill
             // the ListView with some dummy data.
@@ -81,10 +81,19 @@ public class MainActivity extends ActionBarActivity {
             List<String> weekForecast = new ArrayList<>(Arrays.asList(data));
             // Initialise adapter
 
-            ArrayAdapter<String> arrayAdapter = new ArrayAdapter<>(
-                    getActivity(), R.layout.list_item_forecast, R.id.list_item_forecast_textview,
+            // Now that we have some dummy forecast data, create an ArrayAdapter.
+            // The ArrayAdapter will take data from a source (like our dummy forecast data)
+            // use it to populate the ListView it's attached to.
+            ArrayAdapter<String> mForecastAdapter = new ArrayAdapter<>(
+                    // The current context (this fragment's parent activity
+                    getActivity(),
+                    // ID of list item layout
+                    R.layout.list_item_forecast,
+                    // ID of the textview to populate
+                    R.id.list_item_forecast_textview,
+                    // Forecast data
                     weekForecast);
-            View rootView = inflater.inflate(R.layout.fragment_main, container, false);
+
             return rootView;
         }
     }
