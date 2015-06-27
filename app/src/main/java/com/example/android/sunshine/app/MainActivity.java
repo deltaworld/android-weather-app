@@ -9,6 +9,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.ListView;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -55,6 +56,8 @@ public class MainActivity extends ActionBarActivity {
      */
     public static class PlaceholderFragment extends Fragment {
 
+        private ArrayAdapter<String> mForecastAdapter;
+
         public PlaceholderFragment() {
         }
 
@@ -84,7 +87,8 @@ public class MainActivity extends ActionBarActivity {
             // Now that we have some dummy forecast data, create an ArrayAdapter.
             // The ArrayAdapter will take data from a source (like our dummy forecast data)
             // use it to populate the ListView it's attached to.
-            ArrayAdapter<String> mForecastAdapter = new ArrayAdapter<>(
+
+            mForecastAdapter = new ArrayAdapter<>(
                     // The current context (this fragment's parent activity
                     getActivity(),
                     // ID of list item layout
@@ -93,6 +97,11 @@ public class MainActivity extends ActionBarActivity {
                     R.id.list_item_forecast_textview,
                     // Forecast data
                     weekForecast);
+
+            // Get a reference to the ListView, and attach this adapter to it.
+            ListView listView = (ListView) rootView.findViewById(
+                    R.id.listview_forecast);
+            listView.setAdapter(mForecastAdapter);
 
             return rootView;
         }
