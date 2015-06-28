@@ -53,10 +53,11 @@ public class ForecastFragment extends Fragment {
         // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
         if (id == R.id.action_refresh) {
+            FetchWeatherTask fetchWeatherTask = new FetchWeatherTask();
+            fetchWeatherTask.doInBackground();
             return true;
         }
         return super.onOptionsItemSelected(item);
-
     }
 
     @Override
@@ -106,6 +107,7 @@ public class ForecastFragment extends Fragment {
     }
 
     public class FetchWeatherTask extends AsyncTask<Void, Void, Void> {
+
         @Override
         protected Void doInBackground(Void... params) {
 
@@ -169,9 +171,7 @@ public class ForecastFragment extends Fragment {
                     }
                 }
             }
-
             return null;
         }
-
     }
 }
