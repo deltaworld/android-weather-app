@@ -4,6 +4,6 @@
     <item
         android:id="@+id/action_refresh"
         android:title="@string/action_refresh"
-        app:ShowAsAction="never" />
+        app:showAsAction="never" />
     <!-- app:ShowAsAction:to appear in the overflow menu only -->
 </menu>
