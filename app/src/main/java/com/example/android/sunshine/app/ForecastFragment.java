@@ -317,22 +317,22 @@ public class ForecastFragment extends Fragment {
         }
 
         @Override
-        protected void onPostExecute(String[] weatherDataArray) {
+        protected void onPostExecute(String[] result) {
+            if (result != null) {
+                //Empty adapter from all previous records
+                //Clears the listView
+                mForecastAdapter.clear();
+                // iterates through the String[] upto result
+                // adding each String to the adapter
+                // the adapter updates the listView
+                for (String dayForecastStr : result) {
+                    mForecastAdapter.add(dayForecastStr);
+                }
+                // New data is back from the server. Hooray!
+            }
 
-            mForecastAdapter = new ArrayAdapter<String>(
-                    // The current context (this fragment's parent activity
-                    getActivity(),
-                    // ID of list item layout
-                    R.layout.list_item_forecast,
-                    // ID of the textview to populate
-                    R.id.list_item_forecast_textview,
-                    // Forecast data
-                    weatherDataArray);
 
-            List<String> weekForecast = new ArrayList<>(Arrays.asList(weatherDataArray));
-
-
-            Log.v(LOG_TAG, "Weather Data Array: " + weekForecast.toString());
+            Log.v(LOG_TAG, "Forecast Adapter: " + mForecastAdapter.toString());
         }
     }
 }
