@@ -209,9 +209,9 @@ public class ForecastFragment extends Fragment {
                 resultStrs[i] = day + " - " + description + " - " + highAndLow;
             }
 
-            for (String s : resultStrs) {
-                Log.v(LOG_TAG, "Forecast entry: " + s);
-            }
+//            for (String s : resultStrs) {
+//                Log.v(LOG_TAG, "Forecast entry: " + s);
+//            }
             return resultStrs;
         }
 
@@ -255,7 +255,7 @@ public class ForecastFragment extends Fragment {
 
                 URL url = new URL(builtUri.toString());
 
-                Log.v(LOG_TAG, "Built URI " + builtUri.toString());
+                // Log.v(LOG_TAG, "Built URI " + builtUri.toString());
 
                 // Create the request to OpenWeatherMap, and open the connection
                 urlConnection = (HttpURLConnection) url.openConnection();
@@ -285,7 +285,7 @@ public class ForecastFragment extends Fragment {
                 }
                 forecastJsonStr = buffer.toString();
 
-                Log.v(LOG_TAG, "Forecast JSON String: " + forecastJsonStr);
+                // Log.v(LOG_TAG, "Forecast JSON String: " + forecastJsonStr);
             } catch (IOException e) {
                 Log.e(LOG_TAG, "Error ", e);
                 // If the code didn't successfully get the weather data, there's no point in attempting
@@ -304,7 +304,6 @@ public class ForecastFragment extends Fragment {
                 }
             }
 
-            String[] weatherFormatted = new String[0];
             try {
                 return getWeatherDataFromJson(forecastJsonStr, numDays);
             } catch (JSONException e) {
@@ -330,9 +329,7 @@ public class ForecastFragment extends Fragment {
                 }
                 // New data is back from the server. Hooray!
             }
-
-
-            Log.v(LOG_TAG, "Forecast Adapter: " + mForecastAdapter.toString());
+            // Log.v(LOG_TAG, "Forecast Adapter: " + mForecastAdapter.toString());
         }
     }
 }
