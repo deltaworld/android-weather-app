@@ -14,22 +14,10 @@ public class WeatherDataParser {
      */
     public static double getMaxTemperatureForDay(String weatherJsonStr, int dayIndex)
             throws JSONException {
-
-        // Parse JSON String to JSON object
-        JSONObject jsonWeather = new JSONObject(weatherJsonStr);
-
-        // Get array with name=list to a JSONArray
-        JSONArray jsonArray = jsonWeather.getJSONArray("list");
-
-        //JSONObject of dayIndex
-        JSONObject currentDay = jsonArray.getJSONObject(dayIndex);
-        JSONObject temp = currentDay.getJSONObject("temp");
-
-
-        System.out.println(temp.names().toString());
-        System.out.println(temp.toString());
-
-        return temp.getDouble("max");
+        JSONObject weather = new JSONObject(weatherJsonStr);
+        JSONArray days = weather.getJSONArray("list");
+        JSONObject dayInfo = days.getJSONObject(dayIndex);
+        JSONObject temperatureInfo = dayInfo.getJSONObject("temp");
+        return temperatureInfo.getDouble("max");
     }
-
 }
