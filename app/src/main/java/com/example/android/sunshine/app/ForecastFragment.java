@@ -35,8 +35,8 @@ import java.util.List;
  */
 public class ForecastFragment extends Fragment {
 
+    public static ArrayAdapter<String> mForecastAdapter;
     private final String LOG_TAG = FetchWeatherTask.class.getSimpleName();
-    private ArrayAdapter<String> mForecastAdapter;
 
     public ForecastFragment() {
     }
@@ -213,7 +213,6 @@ public class ForecastFragment extends Fragment {
                 Log.v(LOG_TAG, "Forecast entry: " + s);
             }
             return resultStrs;
-
         }
 
         @Override
@@ -315,6 +314,25 @@ public class ForecastFragment extends Fragment {
 
             // This will only happen if there was an error getting or parsing the forecast.
             return null;
+        }
+
+        @Override
+        protected void onPostExecute(String[] weatherDataArray) {
+
+            mForecastAdapter = new ArrayAdapter<String>(
+                    // The current context (this fragment's parent activity
+                    getActivity(),
+                    // ID of list item layout
+                    R.layout.list_item_forecast,
+                    // ID of the textview to populate
+                    R.id.list_item_forecast_textview,
+                    // Forecast data
+                    weatherDataArray);
+
+            List<String> weekForecast = new ArrayList<>(Arrays.asList(weatherDataArray));
+
+
+            Log.v(LOG_TAG, "Weather Data Array: " + weekForecast.toString());
         }
     }
 }
