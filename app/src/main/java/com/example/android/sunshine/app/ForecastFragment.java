@@ -117,8 +117,7 @@ public class ForecastFragment extends Fragment {
 
         private final String LOG_TAG = FetchWeatherTask.class.getSimpleName();
 
-        /**
-         * The date/time conversion code is going to be moved outside the asynctask later,
+        /* The date/time conversion code is going to be moved outside the asynctask later,
          * so for convenience we're breaking it out into its own method now.
          */
         private String getReadableDateString(long time) {
@@ -308,13 +307,14 @@ public class ForecastFragment extends Fragment {
 
             String[] weatherFormatted = new String[0];
             try {
-                weatherFormatted = getWeatherDataFromJson(forecastJsonStr, numDays);
+                return getWeatherDataFromJson(forecastJsonStr, numDays);
             } catch (JSONException e) {
-                Log.e(LOG_TAG, "JSON Error", e);
+                Log.e(LOG_TAG, e.getMessage(), e);
+                e.printStackTrace();
             }
 
-            Log.v(LOG_TAG, "Current Day Formatted: " + weatherFormatted[0]);
-            return weatherFormatted;
+            // This will only happen if there was an error getting or parsing the forecast.
+            return null;
         }
     }
 }
