@@ -15,4 +15,4 @@ For the original version, please go [here](https://github.com/udacity/Sunshine).
 
 A changelog for the course can be found [here](https://docs.google.com/a/knowlabs.com/document/d/193xJb_OpcNCqgquMhxPrMh05IEYFXQqt0S6-6YK8gBw/pub).
 
-![Screenshot of ListView updating](screenshot-01.png "ListView Update")
+![Screenshot of ListView updating](/screenshot-01.png "ListView Update")
