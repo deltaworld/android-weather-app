@@ -321,15 +321,19 @@ public class ForecastFragment extends Fragment {
                 //Empty adapter from all previous records
                 //Clears the listView
                 mForecastAdapter.clear();
-                // iterates through the String[] upto result
-                // adding each String to the adapter
-                // the adapter updates the listView
+
+                // more efficient way of updating listView as it will notifychange after all items
+                // have been added.
+                mForecastAdapter.addAll(result);
+                /* iterates through the String[] upto result
+                   adding each String to the adapter
+                   the adapter updates the listView
                 for (String dayForecastStr : result) {
                     mForecastAdapter.add(dayForecastStr);
                 }
-                // New data is back from the server. Hooray!
+                 New data is back from the server. Hooray! */
             }
-            // Log.v(LOG_TAG, "Forecast Adapter: " + mForecastAdapter.toString());
+            //Log.v(LOG_TAG, "Forecast Adapter: " + mForecastAdapter.toString());
         }
     }
 }
