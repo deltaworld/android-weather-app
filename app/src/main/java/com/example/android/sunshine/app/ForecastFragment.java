@@ -1,6 +1,5 @@
 package com.example.android.sunshine.app;
 
-import android.content.Context;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -98,32 +97,19 @@ public class ForecastFragment extends Fragment {
         // use it to populate the ListView it's attached to.
 
         mForecastAdapter = new ArrayAdapter<>(
-                // The current context (this fragment's parent activity
-                getActivity(),
-                // ID of list item layout
-                R.layout.list_item_forecast,
-                // ID of the textview to populate
-                R.id.list_item_forecast_textview,
-                // Forecast data
+                getActivity(), // The current context (this activity)
+                R.layout.list_item_forecast, // The name of the layout ID
+                R.id.list_item_forecast_textview, // ID of the textview to populate
                 weekForecast);
 
         // Get a reference to the ListView, and attach this adapter to it.
-        final ListView listView = (ListView) rootView.findViewById(
-                R.id.listview_forecast);
+        final ListView listView = (ListView) rootView.findViewById(R.id.listview_forecast);
         listView.setAdapter(mForecastAdapter);
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
-
-                // Need to set context to the Fragments current activity
-                Context context = getActivity();
-                // Acquire from the listView the itemPosition passed through as an arg then convert
-                // to string
-                String text = listView.getItemAtPosition(position).toString();
-                // Define new toast with .makeText adding (context, text, time)
-                Toast toast = Toast.makeText(context, text, Toast.LENGTH_SHORT);
-                // Show toast.
-                toast.show();
+                String forecast = mForecastAdapter.getItem(position);
+                Toast.makeText(getActivity(), forecast, Toast.LENGTH_SHORT).show();
             }
         });
 
