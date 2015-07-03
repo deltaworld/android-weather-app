@@ -18,6 +18,7 @@
     <string name="title_activity_detail">Details</string>
     <string name="title_activity_settings">Settings</string>
 
+    <!-- ** EditPreference: Location ** -->
     <!-- Label for the location preference [CHAR LIMIT=30] -->
     <string name="pref_location_label">Location</string>
 
@@ -26,5 +27,16 @@
 
     <!-- Default postal code for location preferences [CHAR LIMIT=NONE] -->
     <string name="pref_location_default" translatable="false">94043</string>
+
+    <!-- ** ListPreference: Temperature Units ** -->
+    <!-- Label for the temperature units [CHAR LIMIT=30] -->
+    <string name="pref_temperature_units_label">Temperature Units</string>
+
+    <!-- Key name for storing temperature units in SharedPreferences [CHAR LIMIT=NONE] -->
+    <string name="pref_temperature_units_key" translatable="false">temp_units</string>
+
+    <!-- Default units for temperature units -->
+    <string name="pref_temperature_units_default">Metric</string>
+
 
 </resources>
