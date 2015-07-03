@@ -27,10 +27,8 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.net.URLEncoder;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 
@@ -41,7 +39,7 @@ public class ForecastFragment extends Fragment {
 
     private static ArrayAdapter<String> mForecastAdapter;
     private final String LOG_TAG = FetchWeatherTask.class.getSimpleName();
-    private String location;
+
 
 
     public ForecastFragment() {
@@ -68,34 +66,8 @@ public class ForecastFragment extends Fragment {
         if (id == R.id.action_refresh) {
             updateWeather();
             return true;
-        } else if (id == R.id.action_map) {
-            try {
-                String encodedLocation = URLEncoder.encode(location, "UTF-8");
-                Uri geo = Uri.parse("geo:0,0")
-                        .buildUpon()
-                        .appendQueryParameter("q", encodedLocation)
-                        .build();
-                Log.v("TESTencLoc", encodedLocation);
-                Log.v("TESTUri", geo.toString());
-                showMap(geo);
-
-            } catch (UnsupportedEncodingException e) {
-                e.printStackTrace();
-                Log.e("E", e.getMessage());
-            }
-
-
-            return true;
         }
         return super.onOptionsItemSelected(item);
-    }
-
-    public void showMap(Uri geoLocation) {
-        Intent intent = new Intent(Intent.ACTION_VIEW);
-        intent.setData(geoLocation);
-        if (intent.resolveActivity(getActivity().getPackageManager()) != null) {
-            startActivity(intent);
-        }
     }
 
     @Override
@@ -107,7 +79,7 @@ public class ForecastFragment extends Fragment {
     private void updateWeather() {
         FetchWeatherTask weatherTask = new FetchWeatherTask();
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
-        location = prefs.getString(getString(R.string.pref_location_key),
+        String location = prefs.getString(getString(R.string.pref_location_key),
                 getString(R.string.pref_location_default));
 
         weatherTask.execute(location);
