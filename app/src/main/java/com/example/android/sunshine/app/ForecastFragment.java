@@ -37,7 +37,7 @@ import java.util.ArrayList;
  */
 public class ForecastFragment extends Fragment {
 
-    public static ArrayAdapter<String> mForecastAdapter;
+    private static ArrayAdapter<String> mForecastAdapter;
     private final String LOG_TAG = FetchWeatherTask.class.getSimpleName();
 
     public ForecastFragment() {
@@ -298,7 +298,8 @@ public class ForecastFragment extends Fragment {
                     // Since it's JSON, adding a newline isn't necessary (it won't affect parsing)
                     // But it does make debugging a *lot* easier if you print out the completed
                     // buffer for debugging.
-                    buffer.append(line + "\n");
+                    buffer.append(line);
+                    buffer.append("\n");
                 }
 
                 if (buffer.length() == 0) {
