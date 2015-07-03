@@ -4,7 +4,7 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-public class WeatherDataParser {
+class WeatherDataParser {
 
     /**
      * Given a string of the form returned by the api call:

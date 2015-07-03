@@ -80,10 +80,6 @@ public class ForecastFragment extends Fragment {
         String location = prefs.getString(getString(R.string.pref_location_key),
                 getString(R.string.pref_location_default));
 
-        // temperature_unit returns "Metric"
-        String temperature_unit = prefs.getString(getString(R.string.pref_units_key),
-                getString(R.string.pref_units_metric));
-
         weatherTask.execute(location);
     }
 

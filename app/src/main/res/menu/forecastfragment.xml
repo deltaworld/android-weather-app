@@ -5,5 +5,9 @@
         android:id="@+id/action_refresh"
         android:title="@string/action_refresh"
         app:showAsAction="never" />
+    <item
+        android:id="@+id/action_map"
+        android:title="@string/action_map"
+        app:showAsAction="never" />
     <!-- app:ShowAsAction:to appear in the overflow menu only -->
 </menu>
