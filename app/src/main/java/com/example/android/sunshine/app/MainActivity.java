@@ -14,15 +14,52 @@ import android.view.MenuItem;
 public class MainActivity extends ActionBarActivity {
 
     private final String LOG_TAG = MainActivity.class.getSimpleName();
+
+    @Override
+    protected void onPause() {
+        Log.v(LOG_TAG, "OnPause");
+        super.onPause();
+        // Another activity is taking focus (this activity is about to be "paused").
+    }
+
+    @Override
+    protected void onStop() {
+        Log.v(LOG_TAG, "onStop");
+        super.onStop();
+        // The activity is no longer visible (it is now "stopped")
+    }
+
+    @Override
+    protected void onDestroy() {
+        Log.v(LOG_TAG, "onDestroy");
+        super.onDestroy();
+        // The activity is about to be destroyed.
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        Log.v(LOG_TAG, "onCreate");
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         if (savedInstanceState == null) {
             getSupportFragmentManager().beginTransaction()
                     .add(R.id.container, new ForecastFragment())
                     .commit();
+
         }
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        Log.v(LOG_TAG, "OnStart");
+        // This activity is about to become visible.
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        Log.v(LOG_TAG, "onResume");
     }
 
     @Override
