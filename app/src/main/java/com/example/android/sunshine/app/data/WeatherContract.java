@@ -21,6 +21,7 @@ import android.text.format.Time;
 /**
  * Defines table and column names for the weather database.
  */
+@SuppressWarnings("deprecation")
 public class WeatherContract {
 
     // To make it easy to query for the exact date, we normalize all dates that go into
@@ -40,6 +41,21 @@ public class WeatherContract {
      */
     public static final class LocationEntry implements BaseColumns {
         public static final String TABLE_NAME = "location";
+
+        // _ID not used as it is implicitly defined by BaseColumns
+
+        // The location setting string is what will be sent to openweathermap
+        // as the location query.
+        public static final String COLUMN_LOCATION_SETTING = "location_setting";
+
+        // Human readable location string, provided by the API. Because for styling
+        // "Mountain View" is more recognizable than 94043.
+        public static final String COLUMN_CITY_NAME = "city_name";
+
+        // In order to uniquely pinpoint the location on the map when we launch the
+        // map intent, we store the latitude and longitude
+        public static final String COLUMN_COORD_LAT = "coord_lat";
+        public static final String COLUMN_COORD_LONG = "coord_long";
 
     }
 
