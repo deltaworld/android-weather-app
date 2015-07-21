@@ -173,7 +173,7 @@ public class WeatherProvider extends ContentProvider {
         // Here's the switch statement that, given a URI, will determine what kind of request it is,
         // and query the database accordingly.
         Cursor retCursor;
-        SQLiteQueryBuilder queryBuilder = new SQLiteQueryBuilder();
+
         switch (sUriMatcher.match(uri)) {
             // "weather/*/*"
             case WEATHER_WITH_LOCATION_AND_DATE: {
@@ -187,21 +187,24 @@ public class WeatherProvider extends ContentProvider {
             }
             // "weather"
             case WEATHER: {
-                queryBuilder.setTables(WeatherContract.WeatherEntry.TABLE_NAME);
-                retCursor = queryBuilder.query(mOpenHelper.getReadableDatabase(),
+                retCursor = mOpenHelper.getReadableDatabase().query(
+                        WeatherContract.WeatherEntry.TABLE_NAME,
                         projection,
-                        selection, selectionArgs,
+                        selection,
+                        selectionArgs,
                         null,
                         null,
-                        sortOrder);
+                        sortOrder
+                );
                 break;
             }
             // "location"
             case LOCATION: {
-                queryBuilder.setTables(WeatherContract.LocationEntry.TABLE_NAME);
-                retCursor = queryBuilder.query(mOpenHelper.getReadableDatabase(),
+                retCursor = mOpenHelper.getReadableDatabase().query(
+                        WeatherContract.LocationEntry.TABLE_NAME,
                         projection,
-                        selection, selectionArgs,
+                        selection,
+                        selectionArgs,
                         null,
                         null,
                         sortOrder);
