@@ -47,21 +47,19 @@ import java.util.Vector;
 public class FetchWeatherTask extends AsyncTask<String, Void, String[]> {
 
     private final String LOG_TAG = FetchWeatherTask.class.getSimpleName();
-
-    private ArrayAdapter<String> mForecastAdapter;
     private final Context mContext;
+    private ArrayAdapter<String> mForecastAdapter;
+    private boolean DEBUG = true;
 
     public FetchWeatherTask(Context context, ArrayAdapter<String> forecastAdapter) {
         mContext = context;
         mForecastAdapter = forecastAdapter;
     }
 
-    private boolean DEBUG = true;
-
     /* The date/time conversion code is going to be moved outside the asynctask later,
      * so for convenience we're breaking it out into its own method now.
      */
-    private String getReadableDateString(long time){
+    private String getReadableDateString(long time) {
         // Because the API returns a unix timestamp (measured in seconds),
         // it must be converted to milliseconds in order to be converted to valid date.
         Date date = new Date(time);
@@ -95,82 +93,74 @@ public class FetchWeatherTask extends AsyncTask<String, Void, String[]> {
         long roundedHigh = Math.round(high);
         long roundedLow = Math.round(low);
 
-        String highLowStr = roundedHigh + "/" + roundedLow;
-        return highLowStr;
+        return roundedHigh + "/" + roundedLow;
     }
 
     /**
      * Helper method to handle insertion of a new location in the weather database.
      *
      * @param locationSetting The location string used to request updates from the server.
-     * @param cityName A human-readable city name, e.g "Mountain View"
-     * @param lat the latitude of the city
-     * @param lon the longitude of the city
+     * @param cityName        A human-readable city name, e.g "Mountain View"
+     * @param lat             the latitude of the city
+     * @param lon             the longitude of the city
      * @return the row ID of the added location.
      */
     long addLocation(String locationSetting, String cityName, double lat, double lon) {
 
-        // The locationSetting string is what will be sent to openweathermap
-        // as the location query.
-
-        // First, check if the location with this city name exists in the db
-
-        // Pseudocode
-        // Input: CityName,
-        // Check CityName exist in DB.
-        // if not exist => {add cityName, lat, long, locationSetting}
-        // ?? How to find locationSetting of cityName?
-
-
+        // return the locationId as long
         long locationId;
-
-        // using the current contexts content resolver query the database with it's default parameters.
+        //1. Query the content resolver with
+        // input:   locationSetting
+        // output:  location.ID
+        // Context. ContentResolver Query
+        // ContentResolver.query doc https://goo.gl/x1dkVc
         Cursor locationCursor = mContext.getContentResolver().query(
-                // I get this being the Content Uri of the table, returns all the data in the table.
-                WeatherContract.LocationEntry.CONTENT_URI,                      // Uri uri
-                // This references the unique primary ID of the location as a projection
-                // What is meant by projection my understanding is not completely clear on this.
-                new String[]{WeatherContract.LocationEntry._ID},                //String[] projection
-                // This line has got me confused. I know the syntax comes from SQL with the ? but I
-                // can't see the connection. This must be the query.
-                WeatherContract.LocationEntry.COLUMN_LOCATION_SETTING + " = ?", //String selection
-                // the query passed to openWeatherMap arg from method entry
-                // why here not in the previous argument of .query
-                new String[]{locationSetting},                                  // String[] selectionArgs
-                null);                                                          // String sortOrder not needed.
+                // URI of Weather Table
+                WeatherContract.LocationEntry.CONTENT_URI,
+                // String Array with desired output:Location.ID
+                new String[]{WeatherContract.LocationEntry._ID},//projection->need ID
+                // Use SQL WHERE clause with ? as the parameter (input)
+                WeatherContract.LocationEntry.COLUMN_LOCATION_SETTING + " = ?",// SQL WHERE CLAUSE
+                // the parameter for the SQL query above (which is locationSetting) String[] Array
+                // for each ? parameters of the SQL query, enter the locationSetting
+                new String[]{locationSetting},
+                // no sort order required.
+                null);
 
-        if (locationCursor.moveToFirst()) { // if successful to moving to first record then record exists
-            // Retrieve locationIdIndex from the cursor using getColumnIndex by passing in the ID of the location.
+        // check if the id exists by going to first record if it can then it exists
+        if (locationCursor.moveToFirst()) {
+            // extract long of locationID
+            // 1. We have LocationEntry._ID and the Cursor from above.
+            // using the getColumnIndex method from cursor
+            // https://developer.android.com/reference/android/database/Cursor.html#getColumnIndex(java.lang.String)
+            // This gets the integer index of the locationID
             int locationIdIndex = locationCursor.getColumnIndex(WeatherContract.LocationEntry._ID);
+            // Then use getLong to convert to Long from the index
             locationId = locationCursor.getLong(locationIdIndex);
-            // What I don't get is that we know the LocationEntry._ID as we retrieved it from the database
-            // why do we need to do the above to get the locationId?
-
         } else {
-            // Now that the content provider is set up, inserting rows of data is pretty simple.
-            // First create a ContentValues object to hold the data you want to insert.
-            ContentValues locationValues = new ContentValues();
+            // insert record into DB using Content Resolver then return locationId
+            // ContentValues docs: https://goo.gl/FVkv3l
 
-            // Then add the data, along with the corresponding name of the data type,
-            // so the content provider knows what kind of value is being inserted.
-            locationValues.put(WeatherContract.LocationEntry.COLUMN_CITY_NAME, cityName);
-            locationValues.put(WeatherContract.LocationEntry.COLUMN_LOCATION_SETTING, locationSetting);
-            locationValues.put(WeatherContract.LocationEntry.COLUMN_COORD_LAT, lat);
-            locationValues.put(WeatherContract.LocationEntry.COLUMN_COORD_LONG, lon);
+            ContentValues values = new ContentValues();
+            // ContentValues.put()
+            // codota ref: https://goo.gl/NRFb45
+            // add all inputs from the addLocation method
+            values.put(WeatherContract.LocationEntry.COLUMN_CITY_NAME, cityName);
+            values.put(WeatherContract.LocationEntry.COLUMN_COORD_LAT, lat);
+            values.put(WeatherContract.LocationEntry.COLUMN_COORD_LONG, lon);
+            values.put(WeatherContract.LocationEntry.COLUMN_LOCATION_SETTING, locationSetting);
 
-            // Finally, insert location data into the database.
-            Uri insertedUri = mContext.getContentResolver().insert(
-                    WeatherContract.LocationEntry.CONTENT_URI,
-                    locationValues
-            );
+            // ContentResolver.insert
+            // docs: https://goo.gl/H42Hga
+            Uri insertUri = mContext.getContentResolver().insert(
+                    WeatherContract.LocationEntry.CONTENT_URI, // URI of Location Table
+                    values); // ContentValues of data to be entered.
 
-            // The resulting URI contains the ID for the row.  Extract the locationId from the Uri.
-            // Don't understand this. Why parseId?
-            locationId = ContentUris.parseId(insertedUri);
+            // Get Long locationID from newly inserted record
+            // SO Ref: https://goo.gl/zzqve9 (use ContentUris.parseId)
+            locationId = ContentUris.parseId(insertUri);
         }
 
-        locationCursor.close();
-        // Wait, that worked?  Yes!
         return locationId;
     }
 
@@ -182,7 +172,7 @@ public class FetchWeatherTask extends AsyncTask<String, Void, String[]> {
     String[] convertContentValuesToUXFormat(Vector<ContentValues> cvv) {
         // return strings to keep UI functional for now
         String[] resultStrs = new String[cvv.size()];
-        for ( int i = 0; i < cvv.size(); i++ ) {
+        for (int i = 0; i < cvv.size(); i++) {
             ContentValues weatherValues = cvv.elementAt(i);
             String highAndLow = formatHighLows(
                     weatherValues.getAsDouble(WeatherEntry.COLUMN_MAX_TEMP),
@@ -198,7 +188,7 @@ public class FetchWeatherTask extends AsyncTask<String, Void, String[]> {
     /**
      * Take the String representing the complete forecast in JSON Format and
      * pull out the data we need to construct the Strings needed for the wireframes.
-     *
+     * <p/>
      * Fortunately parsing is easy:  constructor takes the JSON string and converts it
      * into an Object hierarchy for us.
      */
@@ -252,7 +242,7 @@ public class FetchWeatherTask extends AsyncTask<String, Void, String[]> {
             long locationId = addLocation(locationSetting, cityName, cityLatitude, cityLongitude);
 
             // Insert the new weather information into the database
-            Vector<ContentValues> cVVector = new Vector<ContentValues>(weatherArray.length());
+            Vector<ContentValues> cVVector = new Vector<>(weatherArray.length());
 
             // OWM returns daily forecasts based upon the local time of the city that is being
             // asked for, which means that we need to know the GMT offset to translate this data
@@ -271,7 +261,7 @@ public class FetchWeatherTask extends AsyncTask<String, Void, String[]> {
             // now we work exclusively in UTC
             dayTime = new Time();
 
-            for(int i = 0; i < weatherArray.length(); i++) {
+            for (int i = 0; i < weatherArray.length(); i++) {
                 // These are the values that will be collected.
                 long dateTime;
                 double pressure;
@@ -289,7 +279,7 @@ public class FetchWeatherTask extends AsyncTask<String, Void, String[]> {
                 JSONObject dayForecast = weatherArray.getJSONObject(i);
 
                 // Cheating to convert this to UTC time, which is what we want anyhow
-                dateTime = dayTime.setJulianDay(julianStartDay+i);
+                dateTime = dayTime.setJulianDay(julianStartDay + i);
 
                 pressure = dayForecast.getDouble(OWM_PRESSURE);
                 humidity = dayForecast.getInt(OWM_HUMIDITY);
@@ -326,7 +316,7 @@ public class FetchWeatherTask extends AsyncTask<String, Void, String[]> {
             }
 
             // add to database
-            if ( cVVector.size() > 0 ) {
+            if (cVVector.size() > 0) {
                 // Student: call bulkInsert to add the weatherEntries to the database here
             }
 
@@ -461,7 +451,7 @@ public class FetchWeatherTask extends AsyncTask<String, Void, String[]> {
     protected void onPostExecute(String[] result) {
         if (result != null && mForecastAdapter != null) {
             mForecastAdapter.clear();
-            for(String dayForecastStr : result) {
+            for (String dayForecastStr : result) {
                 mForecastAdapter.add(dayForecastStr);
             }
             // New data is back from the server.  Hooray!
