@@ -160,7 +160,8 @@ public class FetchWeatherTask extends AsyncTask<String, Void, String[]> {
             // SO Ref: https://goo.gl/zzqve9 (use ContentUris.parseId)
             locationId = ContentUris.parseId(insertUri);
         }
-
+        // DON'T FORGET TO CLOSE CURSOR!!
+        locationCursor.close();
         return locationId;
     }
 
