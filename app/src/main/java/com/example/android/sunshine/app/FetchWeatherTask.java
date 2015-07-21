@@ -121,6 +121,7 @@ public class FetchWeatherTask extends AsyncTask<String, Void, String[]> {
         // if not exist => {add cityName, lat, long, locationSetting}
         // ?? How to find locationSetting of cityName?
 
+
         long locationId;
 
         // using the current contexts content resolver query the database with it's default parameters.
