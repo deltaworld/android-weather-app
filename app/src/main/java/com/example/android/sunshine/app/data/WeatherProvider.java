@@ -186,12 +186,26 @@ public class WeatherProvider extends ContentProvider {
             }
             // "weather"
             case WEATHER: {
-                retCursor = null;
+                SQLiteQueryBuilder weatherQueryBuilder = new SQLiteQueryBuilder();
+                weatherQueryBuilder.setTables(WeatherContract.WeatherEntry.TABLE_NAME);
+                retCursor = weatherQueryBuilder.query(mOpenHelper.getReadableDatabase(),
+                        projection,
+                        selection, selectionArgs,
+                        null,
+                        null,
+                        sortOrder);
                 break;
             }
             // "location"
             case LOCATION: {
-                retCursor = null;
+                SQLiteQueryBuilder locationQueryBuilder = new SQLiteQueryBuilder();
+                locationQueryBuilder.setTables(WeatherContract.LocationEntry.TABLE_NAME);
+                retCursor = locationQueryBuilder.query(mOpenHelper.getReadableDatabase(),
+                        projection,
+                        selection, selectionArgs,
+                        null,
+                        null,
+                        sortOrder);
                 break;
             }
 
