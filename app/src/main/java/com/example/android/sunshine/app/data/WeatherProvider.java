@@ -240,7 +240,6 @@ public class WeatherProvider extends ContentProvider {
                 break;
             }
             case LOCATION: {
-                normalizeDate(values);
                 long _id = db.insert(WeatherContract.LocationEntry.TABLE_NAME, null, values);
                 if (_id > 0)
                     returnUri = WeatherContract.LocationEntry.buildLocationUri(_id);
