@@ -15,7 +15,10 @@
  */
 package com.example.android.sunshine.app.data;
 
+import android.content.ComponentName;
 import android.content.ContentValues;
+import android.content.pm.PackageManager;
+import android.content.pm.ProviderInfo;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.test.AndroidTestCase;
@@ -33,6 +36,29 @@ import com.example.android.sunshine.app.data.WeatherContract.WeatherEntry;
 public class TestProvider extends AndroidTestCase {
 
     public static final String LOG_TAG = TestProvider.class.getSimpleName();
+    static private final int BULK_INSERT_RECORDS_TO_INSERT = 10;
+
+    static ContentValues[] createBulkInsertWeatherValues(long locationRowId) {
+        long currentTestDate = TestUtilities.TEST_DATE;
+        long millisecondsInADay = 1000 * 60 * 60 * 24;
+        ContentValues[] returnContentValues = new ContentValues[BULK_INSERT_RECORDS_TO_INSERT];
+
+        for (int i = 0; i < BULK_INSERT_RECORDS_TO_INSERT; i++, currentTestDate += millisecondsInADay) {
+            ContentValues weatherValues = new ContentValues();
+            weatherValues.put(WeatherContract.WeatherEntry.COLUMN_LOC_KEY, locationRowId);
+            weatherValues.put(WeatherContract.WeatherEntry.COLUMN_DATE, currentTestDate);
+            weatherValues.put(WeatherContract.WeatherEntry.COLUMN_DEGREES, 1.1);
+            weatherValues.put(WeatherContract.WeatherEntry.COLUMN_HUMIDITY, 1.2 + 0.01 * (float) i);
+            weatherValues.put(WeatherContract.WeatherEntry.COLUMN_PRESSURE, 1.3 - 0.01 * (float) i);
+            weatherValues.put(WeatherContract.WeatherEntry.COLUMN_MAX_TEMP, 75 + i);
+            weatherValues.put(WeatherContract.WeatherEntry.COLUMN_MIN_TEMP, 65 - i);
+            weatherValues.put(WeatherContract.WeatherEntry.COLUMN_SHORT_DESC, "Asteroids");
+            weatherValues.put(WeatherContract.WeatherEntry.COLUMN_WIND_SPEED, 5.5 + 0.2 * (float) i);
+            weatherValues.put(WeatherContract.WeatherEntry.COLUMN_WEATHER_ID, 321);
+            returnContentValues[i] = weatherValues;
+        }
+        return returnContentValues;
+    }
 
     /*
        This helper function deletes all records from both database tables using the ContentProvider.
@@ -97,41 +123,6 @@ public class TestProvider extends AndroidTestCase {
     public void deleteAllRecords() {
         deleteAllRecordsFromDB();
     }
-
-    // Since we want each test to start with a clean slate, run deleteAllRecords
-    // in setUp (called by the test runner before each test).
-    @Override
-    protected void setUp() throws Exception {
-        super.setUp();
-        deleteAllRecords();
-    }
-
-    /*
-        This test checks to make sure that the content provider is registered correctly.
-        Students: Uncomment this test to make sure you've correctly registered the WeatherProvider.
-     */
-//    public void testProviderRegistry() {
-//        PackageManager pm = mContext.getPackageManager();
-//
-//        // We define the component name based on the package name from the context and the
-//        // WeatherProvider class.
-//        ComponentName componentName = new ComponentName(mContext.getPackageName(),
-//                WeatherProvider.class.getName());
-//        try {
-//            // Fetch the provider info using the component name from the PackageManager
-//            // This throws an exception if the provider isn't registered.
-//            ProviderInfo providerInfo = pm.getProviderInfo(componentName, 0);
-//
-//            // Make sure that the registered authority matches the authority from the Contract.
-//            assertEquals("Error: WeatherProvider registered with authority: " + providerInfo.authority +
-//                    " instead of authority: " + WeatherContract.CONTENT_AUTHORITY,
-//                    providerInfo.authority, WeatherContract.CONTENT_AUTHORITY);
-//        } catch (PackageManager.NameNotFoundException e) {
-//            // I guess the provider isn't registered correctly.
-//            assertTrue("Error: WeatherProvider not registered at " + mContext.getPackageName(),
-//                    false);
-//        }
-//    }
 
     /*
             This test doesn't touch the database.  It verifies that the ContentProvider returns
@@ -428,28 +419,39 @@ public class TestProvider extends AndroidTestCase {
 //        mContext.getContentResolver().unregisterContentObserver(weatherObserver);
 //    }
 
+    // Since we want each test to start with a clean slate, run deleteAllRecords
+    // in setUp (called by the test runner before each test).
+    @Override
+    protected void setUp() throws Exception {
+        super.setUp();
+        deleteAllRecords();
+    }
 
-    static private final int BULK_INSERT_RECORDS_TO_INSERT = 10;
-    static ContentValues[] createBulkInsertWeatherValues(long locationRowId) {
-        long currentTestDate = TestUtilities.TEST_DATE;
-        long millisecondsInADay = 1000*60*60*24;
-        ContentValues[] returnContentValues = new ContentValues[BULK_INSERT_RECORDS_TO_INSERT];
+    /*
+        This test checks to make sure that the content provider is registered correctly.
+        Students: Uncomment this test to make sure you've correctly registered the WeatherProvider.
+     */
+    public void testProviderRegistry() {
+        PackageManager pm = mContext.getPackageManager();
 
-        for ( int i = 0; i < BULK_INSERT_RECORDS_TO_INSERT; i++, currentTestDate+= millisecondsInADay ) {
-            ContentValues weatherValues = new ContentValues();
-            weatherValues.put(WeatherContract.WeatherEntry.COLUMN_LOC_KEY, locationRowId);
-            weatherValues.put(WeatherContract.WeatherEntry.COLUMN_DATE, currentTestDate);
-            weatherValues.put(WeatherContract.WeatherEntry.COLUMN_DEGREES, 1.1);
-            weatherValues.put(WeatherContract.WeatherEntry.COLUMN_HUMIDITY, 1.2 + 0.01 * (float) i);
-            weatherValues.put(WeatherContract.WeatherEntry.COLUMN_PRESSURE, 1.3 - 0.01 * (float) i);
-            weatherValues.put(WeatherContract.WeatherEntry.COLUMN_MAX_TEMP, 75 + i);
-            weatherValues.put(WeatherContract.WeatherEntry.COLUMN_MIN_TEMP, 65 - i);
-            weatherValues.put(WeatherContract.WeatherEntry.COLUMN_SHORT_DESC, "Asteroids");
-            weatherValues.put(WeatherContract.WeatherEntry.COLUMN_WIND_SPEED, 5.5 + 0.2 * (float) i);
-            weatherValues.put(WeatherContract.WeatherEntry.COLUMN_WEATHER_ID, 321);
-            returnContentValues[i] = weatherValues;
+        // We define the component name based on the package name from the context and the
+        // WeatherProvider class.
+        ComponentName componentName = new ComponentName(mContext.getPackageName(),
+                WeatherProvider.class.getName());
+        try {
+            // Fetch the provider info using the component name from the PackageManager
+            // This throws an exception if the provider isn't registered.
+            ProviderInfo providerInfo = pm.getProviderInfo(componentName, 0);
+
+            // Make sure that the registered authority matches the authority from the Contract.
+            assertEquals("Error: WeatherProvider registered with authority: " + providerInfo.authority +
+                            " instead of authority: " + WeatherContract.CONTENT_AUTHORITY,
+                    providerInfo.authority, WeatherContract.CONTENT_AUTHORITY);
+        } catch (PackageManager.NameNotFoundException e) {
+            // I guess the provider isn't registered correctly.
+            assertTrue("Error: WeatherProvider not registered at " + mContext.getPackageName(),
+                    false);
         }
-        return returnContentValues;
     }
 
     // Student: Uncomment this test after you have completed writing the BulkInsert functionality
