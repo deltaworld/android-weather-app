@@ -15,9 +15,11 @@
  */
 package com.example.android.sunshine.app;
 
+import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.database.Cursor;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.preference.PreferenceManager;
@@ -25,6 +27,7 @@ import android.text.format.Time;
 import android.util.Log;
 import android.widget.ArrayAdapter;
 
+import com.example.android.sunshine.app.data.WeatherContract;
 import com.example.android.sunshine.app.data.WeatherContract.WeatherEntry;
 
 import org.json.JSONArray;
@@ -106,10 +109,68 @@ public class FetchWeatherTask extends AsyncTask<String, Void, String[]> {
      * @return the row ID of the added location.
      */
     long addLocation(String locationSetting, String cityName, double lat, double lon) {
-        // Students: First, check if the location with this city name exists in the db
-        // If it exists, return the current ID
-        // Otherwise, insert it using the content resolver and the base URI
-        return -1;
+
+        // The locationSetting string is what will be sent to openweathermap
+        // as the location query.
+
+        // First, check if the location with this city name exists in the db
+
+        // Pseudocode
+        // Input: CityName,
+        // Check CityName exist in DB.
+        // if not exist => {add cityName, lat, long, locationSetting}
+        // ?? How to find locationSetting of cityName?
+
+        long locationId;
+
+        // using the current contexts content resolver query the database with it's default parameters.
+        Cursor locationCursor = mContext.getContentResolver().query(
+                // I get this being the Content Uri of the table, returns all the data in the table.
+                WeatherContract.LocationEntry.CONTENT_URI,                      // Uri uri
+                // This references the unique primary ID of the location as a projection
+                // What is meant by projection my understanding is not completely clear on this.
+                new String[]{WeatherContract.LocationEntry._ID},                //String[] projection
+                // This line has got me confused. I know the syntax comes from SQL with the ? but I
+                // can't see the connection. This must be the query.
+                WeatherContract.LocationEntry.COLUMN_LOCATION_SETTING + " = ?", //String selection
+                // the query passed to openWeatherMap arg from method entry
+                // why here not in the previous argument of .query
+                new String[]{locationSetting},                                  // String[] selectionArgs
+                null);                                                          // String sortOrder not needed.
+
+        if (locationCursor.moveToFirst()) { // if successful to moving to first record then record exists
+            // Retrieve locationIdIndex from the cursor using getColumnIndex by passing in the ID of the location.
+            int locationIdIndex = locationCursor.getColumnIndex(WeatherContract.LocationEntry._ID);
+            locationId = locationCursor.getLong(locationIdIndex);
+            // What I don't get is that we know the LocationEntry._ID as we retrieved it from the database
+            // why do we need to do the above to get the locationId?
+
+        } else {
+            // Now that the content provider is set up, inserting rows of data is pretty simple.
+            // First create a ContentValues object to hold the data you want to insert.
+            ContentValues locationValues = new ContentValues();
+
+            // Then add the data, along with the corresponding name of the data type,
+            // so the content provider knows what kind of value is being inserted.
+            locationValues.put(WeatherContract.LocationEntry.COLUMN_CITY_NAME, cityName);
+            locationValues.put(WeatherContract.LocationEntry.COLUMN_LOCATION_SETTING, locationSetting);
+            locationValues.put(WeatherContract.LocationEntry.COLUMN_COORD_LAT, lat);
+            locationValues.put(WeatherContract.LocationEntry.COLUMN_COORD_LONG, lon);
+
+            // Finally, insert location data into the database.
+            Uri insertedUri = mContext.getContentResolver().insert(
+                    WeatherContract.LocationEntry.CONTENT_URI,
+                    locationValues
+            );
+
+            // The resulting URI contains the ID for the row.  Extract the locationId from the Uri.
+            // Don't understand this. Why parseId?
+            locationId = ContentUris.parseId(insertedUri);
+        }
+
+        locationCursor.close();
+        // Wait, that worked?  Yes!
+        return locationId;
     }
 
     /*
