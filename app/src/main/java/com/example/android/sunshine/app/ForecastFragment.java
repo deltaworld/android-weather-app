@@ -38,19 +38,16 @@ import com.example.android.sunshine.app.data.WeatherContract;
  */
 public class ForecastFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
 
-    private static final int MY_LOADER_ID = 0;
-
-    private static ForecastAdapter mForecastAdapter;
+    private static final int FORECAST_LOADER = 0;
+    private ForecastAdapter mForecastAdapter;
 
     public ForecastFragment() {
     }
 
     @Override
     public void onActivityCreated(Bundle savedInstanceState) {
+        getLoaderManager().initLoader(FORECAST_LOADER, null, this);
         super.onActivityCreated(savedInstanceState);
-
-        getLoaderManager().initLoader(MY_LOADER_ID, null, this);
-
     }
 
     @Override
@@ -110,24 +107,23 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
     @Override
     public Loader<Cursor> onCreateLoader(int id, Bundle args) {
         String locationSetting = Utility.getPreferredLocation(getActivity());
-        Uri weatherForLocationUri = WeatherContract.WeatherEntry.buildWeatherLocationWithStartDate(
-                locationSetting, System.currentTimeMillis());
 
         // Sort order:  Ascending, by date.
         String sortOrder = WeatherContract.WeatherEntry.COLUMN_DATE + " ASC";
+        Uri weatherForLocationUri = WeatherContract.WeatherEntry.buildWeatherLocationWithStartDate(
+                locationSetting, System.currentTimeMillis());
+
         return new CursorLoader(getActivity(),
                 weatherForLocationUri,
                 null,
                 null,
                 null,
-                sortOrder
-        );
+                sortOrder);
     }
 
     @Override
-    public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
-        mForecastAdapter.swapCursor(data);
-
+    public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
+        mForecastAdapter.swapCursor(cursor);
     }
 
     @Override
