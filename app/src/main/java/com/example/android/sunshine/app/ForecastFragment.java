@@ -1,33 +1,56 @@
+/*
+ * Copyright (C) 2014 The Android Open Source Project
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package com.example.android.sunshine.app;
 
-import android.content.Intent;
-import android.content.SharedPreferences;
+
+import android.database.Cursor;
+import android.net.Uri;
 import android.os.Bundle;
-import android.preference.PreferenceManager;
 import android.support.v4.app.Fragment;
+import android.support.v4.app.LoaderManager;
+import android.support.v4.content.CursorLoader;
+import android.support.v4.content.Loader;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.ListView;
 
-import java.util.ArrayList;
+import com.example.android.sunshine.app.data.WeatherContract;
 
 /**
- * A placeholder fragment containing a simple view.
+ * Encapsulates fetching the forecast and displaying it as a {@link ListView} layout.
  */
-public class ForecastFragment extends Fragment {
+public class ForecastFragment extends Fragment implements LoaderManager.LoaderCallbacks<Cursor> {
 
-    private static ArrayAdapter<String> mForecastAdapter;
-    private final String LOG_TAG = FetchWeatherTask.class.getSimpleName();
+    private static final int MY_LOADER_ID = 0;
 
-
+    private static ForecastAdapter mForecastAdapter;
 
     public ForecastFragment() {
+    }
+
+    @Override
+    public void onActivityCreated(Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+
+        getLoaderManager().initLoader(MY_LOADER_ID, null, this);
+
     }
 
     @Override
@@ -35,6 +58,8 @@ public class ForecastFragment extends Fragment {
         super.onCreate(savedInstanceState);
         // Add this line in order for this fragment to handle menu events.
         setHasOptionsMenu(true);
+
+
     }
 
     @Override
@@ -56,52 +81,57 @@ public class ForecastFragment extends Fragment {
     }
 
     @Override
-    public void onStart() {
-        super.onStart();
-        updateWeather();
-    }
-
-    private void updateWeather() {
-        FetchWeatherTask weatherTask = new FetchWeatherTask(getActivity(), mForecastAdapter);
-        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(getActivity());
-        String location = prefs.getString(getString(R.string.pref_location_key),
-                getString(R.string.pref_location_default));
-
-        weatherTask.execute(location);
-    }
-
-    @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
 
-        // The ArrayAdapter will take data from a source and
-        // use it to populate the ListView it's attached to.
-        mForecastAdapter =
-                new ArrayAdapter<>(
-                getActivity(), // The current context (this activity)
-                R.layout.list_item_forecast, // The name of the layout ID
-                R.id.list_item_forecast_textview, // ID of the textview to populate
-                        new ArrayList<String>());
 
         View rootView = inflater.inflate(R.layout.fragment_main, container, false);
 
         // Get a reference to the ListView, and attach this adapter to it.
         ListView listView = (ListView) rootView.findViewById(R.id.listview_forecast);
+        mForecastAdapter = new ForecastAdapter(getActivity(), null, 0);
         listView.setAdapter(mForecastAdapter);
-        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int position, long l) {
-                String forecast = mForecastAdapter.getItem(position);
-
-                Intent intent = new Intent(getActivity(), DetailActivity.class)
-                        .putExtra(Intent.EXTRA_TEXT, forecast);
-                startActivity(intent);
-            }
-        });
 
         return rootView;
     }
 
+    private void updateWeather() {
+        FetchWeatherTask weatherTask = new FetchWeatherTask(getActivity());
+        String location = Utility.getPreferredLocation(getActivity());
+        weatherTask.execute(location);
+    }
 
+    @Override
+    public void onStart() {
+        super.onStart();
+        updateWeather();
+    }
+
+    @Override
+    public Loader<Cursor> onCreateLoader(int id, Bundle args) {
+        String locationSetting = Utility.getPreferredLocation(getActivity());
+        Uri weatherForLocationUri = WeatherContract.WeatherEntry.buildWeatherLocationWithStartDate(
+                locationSetting, System.currentTimeMillis());
+
+        // Sort order:  Ascending, by date.
+        String sortOrder = WeatherContract.WeatherEntry.COLUMN_DATE + " ASC";
+        return new CursorLoader(getActivity(),
+                weatherForLocationUri,
+                null,
+                null,
+                null,
+                sortOrder
+        );
+    }
+
+    @Override
+    public void onLoadFinished(Loader<Cursor> loader, Cursor data) {
+        mForecastAdapter.swapCursor(data);
+
+    }
+
+    @Override
+    public void onLoaderReset(Loader<Cursor> loader) {
+        mForecastAdapter.swapCursor(null);
+    }
 }
