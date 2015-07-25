@@ -13,7 +13,7 @@ import android.view.MenuItem;
 
 public class MainActivity extends AppCompatActivity {
 
-    private static final String FORECASTFRAGMENT_TAG = "";
+    private static final String FORECASTFRAGMENT_TAG = "FFTAG";
     private final String LOG_TAG = MainActivity.class.getSimpleName();
     // Store current known location
     private String mLocation;
@@ -70,14 +70,14 @@ public class MainActivity extends AppCompatActivity {
     protected void onResume() {
         super.onResume();
         Log.v(LOG_TAG, "onResume");
-        String locationSetting = Utility.getPreferredLocation(this);
-        if (!mLocation.equals(locationSetting)) {
-            ForecastFragment ff = (ForecastFragment) getSupportFragmentManager().findFragmentByTag(
-                    FORECASTFRAGMENT_TAG);
-            ff.onLocationChanged();
-            mLocation = locationSetting;
+        String location = Utility.getPreferredLocation(this);
+        if (location != null && !location.equals(mLocation)) {
+            ForecastFragment ff = (ForecastFragment) getSupportFragmentManager().findFragmentByTag(FORECASTFRAGMENT_TAG);
+            if (null != ff) {
+                ff.onLocationChanged();
+            }
+            mLocation = location;
         }
-
     }
 
     @Override
