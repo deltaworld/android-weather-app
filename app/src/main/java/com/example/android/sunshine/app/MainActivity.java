@@ -5,15 +5,18 @@ import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.support.v7.app.ActionBarActivity;
+import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
 
-public class MainActivity extends ActionBarActivity {
+public class MainActivity extends AppCompatActivity {
 
+    private static final String FORECASTFRAGMENT_TAG = "";
     private final String LOG_TAG = MainActivity.class.getSimpleName();
+    // Store current known location
+    private String mLocation;
 
     @Override
     protected void onPause() {
@@ -38,15 +41,22 @@ public class MainActivity extends ActionBarActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        Log.v(LOG_TAG, "onCreate");
         super.onCreate(savedInstanceState);
+        Log.v(LOG_TAG, "onCreate");
+
+        //SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+        //mLocation = prefs.getString("location", null);
+        mLocation = Utility.getPreferredLocation(this);
+        Log.v(LOG_TAG, "mLocation: " + mLocation);
+
         setContentView(R.layout.activity_main);
         if (savedInstanceState == null) {
             getSupportFragmentManager().beginTransaction()
-                    .add(R.id.container, new ForecastFragment())
+                    .add(R.id.container, new ForecastFragment(), FORECASTFRAGMENT_TAG)
                     .commit();
 
         }
+
     }
 
     @Override
@@ -60,6 +70,14 @@ public class MainActivity extends ActionBarActivity {
     protected void onResume() {
         super.onResume();
         Log.v(LOG_TAG, "onResume");
+        String locationSetting = Utility.getPreferredLocation(this);
+        if (!mLocation.equals(locationSetting)) {
+            ForecastFragment ff = (ForecastFragment) getSupportFragmentManager().findFragmentByTag(
+                    FORECASTFRAGMENT_TAG);
+            ff.onLocationChanged();
+            mLocation = locationSetting;
+        }
+
     }
 
     @Override
