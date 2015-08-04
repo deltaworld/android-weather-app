@@ -40,7 +40,7 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
             WeatherContract.WeatherEntry.COLUMN_PRESSURE,
             WeatherContract.WeatherEntry.COLUMN_DEGREES,
             WeatherContract.WeatherEntry.COLUMN_WIND_SPEED,
-
+            WeatherContract.WeatherEntry.COLUMN_WEATHER_ID
     };
     // these constants correspond to the projection defined above, and must change if the
     // projection changes
@@ -53,6 +53,7 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
     private static final int COL_PRESSURE = 6;
     private static final int COL_WIND_DIRECTION = 7;
     private static final int COL_WIND_SPEED = 8;
+    private static final int COL_WEATHER_CONDITION_ID = 9;
 
 
     private ShareActionProvider mShareActionProvider;
