@@ -5,6 +5,7 @@ import android.database.Cursor;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
 import android.support.v4.view.MenuItemCompat;
@@ -140,6 +141,9 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
 
         String weatherDescription = data.getString(COL_WEATHER_DESC);
 
+        int artNumber = data.getInt(COL_WEATHER_CONDITION_ID);
+        int artResourceForWeatherCondition = Utility.getArtResourceForWeatherCondition(artNumber);
+
         boolean isMetric = Utility.isMetric(getActivity());
 
         String high = Utility.formatTemperature(getActivity(),
@@ -161,9 +165,8 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
 
         ViewHolder holder = new ViewHolder(getView());
 
-        //holder.iconView.setImageDrawable();
-
-
+        holder.iconView.setImageDrawable(ContextCompat.getDrawable(getActivity(),
+                artResourceForWeatherCondition));
         holder.dayView.setText(Utility.getDayName(getActivity(), dateLong));
         holder.dateView.setText(Utility.getFormattedMonthDay(getActivity(), dateLong));
         holder.highTempView.setText(high);
