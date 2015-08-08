@@ -26,39 +26,39 @@
                 android:id="@+id/detail_date_textview"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="June 19"/>
+                />
 
             <TextView
                 android:id="@+id/detail_max_textview"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:paddingTop="16dp"
-                android:text="20°"/>
+                />
 
             <TextView
                 android:id="@+id/detail_min_textview"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="13°"/>
+                />
 
             <TextView
                 android:id="@+id/detail_humidity_textview"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:paddingTop="16dp"
-                android:text="Humidity: 84%"/>
+                />
 
             <TextView
                 android:id="@+id/detail_wind_textview"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Wind: 6 km/h NW"/>
+                />
 
             <TextView
                 android:id="@+id/detail_pressure_textview"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Pressure: 1017 hPa"/>
+                />
         </LinearLayout>
 
         <LinearLayout
@@ -72,13 +72,13 @@
                 android:id="@+id/detail_weather_icon_imageview"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:src="@drawable/ic_launcher"/>
+                />
 
             <TextView
                 android:id="@+id/detail_description_textview"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Clear"/>
+                />
         </LinearLayout>
     </LinearLayout>
 
