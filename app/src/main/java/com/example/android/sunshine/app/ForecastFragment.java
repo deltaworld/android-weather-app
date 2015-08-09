@@ -23,6 +23,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.LoaderManager;
 import android.support.v4.content.CursorLoader;
 import android.support.v4.content.Loader;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -51,6 +52,7 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
     static final int COL_COORD_LAT = 7;
     static final int COL_COORD_LONG = 8;
 
+    static final String POSITION = "forecastPosition";
 
     private static final int FORECAST_LOADER = 0;
     // For the forecast view we're showing only a small subset of the stored data.
@@ -126,6 +128,9 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
         mListView = (ListView) rootView.findViewById(R.id.listview_forecast);
         mListView.setAdapter(mForecastAdapter);
 
+        if (savedInstanceState != null) {
+            mPosition = savedInstanceState.getInt(POSITION);
+        }
         // We'll call our MainActivity
         mListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
 
@@ -142,8 +147,10 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
                             ));
                 }
                 mPosition = position;
+                Log.v("POSITION", String.valueOf(mPosition));
             }
         });
+
         return rootView;
     }
 
@@ -157,6 +164,14 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
         FetchWeatherTask weatherTask = new FetchWeatherTask(getActivity());
         String location = Utility.getPreferredLocation(getActivity());
         weatherTask.execute(location);
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        // Save position of the position of the index.
+        outState.putInt(POSITION, mPosition);
+
+        super.onSaveInstanceState(outState);
     }
 
     @Override
@@ -180,6 +195,7 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
     @Override
     public void onLoadFinished(Loader<Cursor> loader, Cursor cursor) {
         mForecastAdapter.swapCursor(cursor);
+        mListView.smoothScrollToPosition(mPosition);
     }
 
     @Override

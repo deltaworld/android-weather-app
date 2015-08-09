@@ -14,14 +14,13 @@ import android.view.MenuItem;
 public class MainActivity extends AppCompatActivity implements ForecastFragment.Callback {
 
     private static final String DETAILFRAGMENT_TAG = "DFTAG";
+    public static boolean twoPane;
     private final String LOG_TAG = MainActivity.class.getSimpleName();
-
-    private boolean mTwoPane;
     private String mLocation;
 
     @Override
     public void onItemSelected(Uri contentUri) {
-        if (mTwoPane) {
+        if (twoPane) {
             // In two-pane mode, show the detail view in this activity by
             // adding or replacing the detail fragment using a
             // fragment transaction.
@@ -51,7 +50,7 @@ public class MainActivity extends AppCompatActivity implements ForecastFragment.
             // The detail container view will be present only in the large-screen layouts
             // (res/layout-sw600dp). If this view is present, then the activity should be
             // in two-pane mode.
-            mTwoPane = true;
+            twoPane = true;
             // In two-pane mode, show the detail view in this activity by
             // adding or replacing the detail fragment using a
             // fragment transaction.
@@ -61,7 +60,7 @@ public class MainActivity extends AppCompatActivity implements ForecastFragment.
                         .commit();
             }
         } else {
-            mTwoPane = false;
+            twoPane = false;
         }
     }
 

@@ -25,8 +25,6 @@ import android.view.MenuItem;
 @SuppressWarnings("deprecation")
 public class DetailActivity extends AppCompatActivity {
 
-    public static final String DATE_KEY = "date";
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -43,7 +41,7 @@ public class DetailActivity extends AppCompatActivity {
             fragment.setArguments(arguments);
 
             getSupportFragmentManager().beginTransaction()
-                    .add(R.id.weather_detail_container, new DetailFragment())
+                    .add(R.id.weather_detail_container, fragment)
                     .commit();
         }
     }
