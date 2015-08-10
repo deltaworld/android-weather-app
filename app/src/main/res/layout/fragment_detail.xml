@@ -29,14 +29,14 @@
                 />
 
             <TextView
-                android:id="@+id/detail_max_textview"
+                android:id="@+id/detail_high_textview"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:paddingTop="16dp"
                 />
 
             <TextView
-                android:id="@+id/detail_min_textview"
+                android:id="@+id/detail_low_textview"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 />
@@ -69,7 +69,7 @@
             android:orientation="vertical">
 
             <ImageView
-                android:id="@+id/detail_weather_icon_imageview"
+                android:id="@+id/detail_icon"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 />

@@ -202,7 +202,7 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
             if (mShareActionProvider != null) {
                 mShareActionProvider.setShareIntent(createShareForecastIntent());
             }
-            return;
+
         }
     }
 
@@ -224,11 +224,11 @@ public class DetailFragment extends Fragment implements LoaderManager.LoaderCall
 
 
         public ViewHolder(View view) {
-            iconView = (ImageView) view.findViewById(R.id.detail_weather_icon_imageview);
+            iconView = (ImageView) view.findViewById(R.id.detail_icon);
             dayView = (TextView) view.findViewById(R.id.detail_day_textview);
             dateView = (TextView) view.findViewById(R.id.detail_date_textview);
-            highTempView = (TextView) view.findViewById(R.id.detail_max_textview);
-            lowTempView = (TextView) view.findViewById(R.id.detail_min_textview);
+            highTempView = (TextView) view.findViewById(R.id.detail_high_textview);
+            lowTempView = (TextView) view.findViewById(R.id.detail_low_textview);
             humidityView = (TextView) view.findViewById(R.id.detail_humidity_textview);
             pressureView = (TextView) view.findViewById(R.id.detail_pressure_textview);
             descriptionView = (TextView) view.findViewById(R.id.detail_description_textview);
