@@ -24,12 +24,10 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-@SuppressWarnings("deprecation")
 public class Utility {
     // Format used for storing dates in the database.  ALso used for converting those strings
     // back into date objects for comparison/processing.
     public static final String DATE_FORMAT = "yyyyMMdd";
-    private final static String LOG_TAG = Utility.class.getSimpleName();
 
     public static String getPreferredLocation(Context context) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
@@ -39,9 +37,9 @@ public class Utility {
 
     public static boolean isMetric(Context context) {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
-
-        return prefs.getString(context.getString(R.string.pref_units_key), context.getString(
-                R.string.pref_units_metric)).equals(context.getString(R.string.pref_units_metric));
+        return prefs.getString(context.getString(R.string.pref_units_key),
+                context.getString(R.string.pref_units_metric))
+                .equals(context.getString(R.string.pref_units_metric));
     }
 
     static String formatTemperature(Context context, double temperature, boolean isMetric) {
@@ -63,7 +61,7 @@ public class Utility {
      * Helper method to convert the database representation of the date into something to display
      * to users.  As classy and polished a user experience as "20140102" is, we can do better.
      *
-     * @param context      Context to use for resource localization
+     * @param context Context to use for resource localization
      * @param dateInMillis The date in milliseconds
      * @return a user-friendly representation of the date.
      */
@@ -85,10 +83,10 @@ public class Utility {
         if (julianDay == currentJulianDay) {
             String today = context.getString(R.string.today);
             int formatId = R.string.format_full_friendly_date;
-            return context.getString(
+            return String.format(context.getString(
                     formatId,
                     today,
-                    getFormattedMonthDay(context, dateInMillis));
+                    getFormattedMonthDay(context, dateInMillis)));
         } else if (julianDay < currentJulianDay + 7) {
             // If the input date is less than a week in the future, just return the day name.
             return getDayName(context, dateInMillis);
@@ -103,9 +101,9 @@ public class Utility {
      * Given a day, returns just the name to use for that day.
      * E.g "today", "tomorrow", "wednesday".
      *
-     * @param context      Context to use for resource localization
+     * @param context Context to use for resource localization
      * @param dateInMillis The date in milliseconds
-     * @return The localized version of "Today" instead of the actual day name
+     * @return
      */
     public static String getDayName(Context context, long dateInMillis) {
         // If the date is today, return the localized version of "Today" instead of the actual
@@ -130,10 +128,9 @@ public class Utility {
 
     /**
      * Converts db date format to the format "Month day", e.g "June 24".
-     *
-     * @param context      Context to use for resource localization
+     * @param context Context to use for resource localization
      * @param dateInMillis The db formatted date string, expected to be of the form specified
-     *                     in Utility.DATE_FORMAT
+     *                in Utility.DATE_FORMAT
      * @return The day in the form of a string formatted "December 6"
      */
     public static String getFormattedMonthDay(Context context, long dateInMillis) {
@@ -141,17 +138,8 @@ public class Utility {
         time.setToNow();
         SimpleDateFormat dbDateFormat = new SimpleDateFormat(Utility.DATE_FORMAT);
         SimpleDateFormat monthDayFormat = new SimpleDateFormat("MMMM dd");
-        return monthDayFormat.format(dateInMillis);
-    }
-
-    public static String getFormattedPressure(Context context, float pressure) {
-        int pressureFormat = R.string.format_pressure;
-        return String.format(context.getString(pressureFormat), pressure);
-    }
-
-    public static String getFormattedHumidity(Context context, float humidity) {
-        int humidityFormat = R.string.format_humidity;
-        return String.format(context.getString(humidityFormat), humidity);
+        String monthDayString = monthDayFormat.format(dateInMillis);
+        return monthDayString;
     }
 
     public static String getFormattedWind(Context context, float windSpeed, float degrees) {
@@ -163,7 +151,7 @@ public class Utility {
             windSpeed = .621371192237334f * windSpeed;
         }
 
-        // From windView direction in degrees, determine compass direction as a string (e.g NW)
+        // From wind direction in degrees, determine compass direction as a string (e.g NW)
         // You know what's fun, writing really long if/else statements with tons of possible
         // conditions.  Seriously, try it!
         String direction = "Unknown";
@@ -190,7 +178,6 @@ public class Utility {
     /**
      * Helper method to provide the icon resource id according to the weather condition id returned
      * by the OpenWeatherMap call.
-     *
      * @param weatherId from OpenWeatherMap API response
      * @return resource id for the corresponding icon. -1 if no relation is found.
      */
@@ -226,9 +213,8 @@ public class Utility {
     /**
      * Helper method to provide the art resource id according to the weather condition id returned
      * by the OpenWeatherMap call.
-     *
      * @param weatherId from OpenWeatherMap API response
-     * @return resource id for the corresponding image. -1 if no relation is found.
+     * @return resource id for the corresponding icon. -1 if no relation is found.
      */
     public static int getArtResourceForWeatherCondition(int weatherId) {
         // Based on weather code data found at:
@@ -244,7 +230,7 @@ public class Utility {
         } else if (weatherId >= 520 && weatherId <= 531) {
             return R.drawable.art_rain;
         } else if (weatherId >= 600 && weatherId <= 622) {
-            return R.drawable.art_rain;
+            return R.drawable.art_snow;
         } else if (weatherId >= 701 && weatherId <= 761) {
             return R.drawable.art_fog;
         } else if (weatherId == 761 || weatherId == 781) {
@@ -258,6 +244,4 @@ public class Utility {
         }
         return -1;
     }
-
-
 }

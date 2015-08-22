@@ -136,7 +136,8 @@ public class TestDb extends AndroidTestCase {
         assertFalse("Error: Location Not Inserted Correctly", locationRowId == -1L);
 
         // First step: Get reference to writable database
-        // If there's an error in those massive SQL table creation Strings
+        // If there's an error in those massive SQL table creation Strings,
+        // errors will be thrown here when you try to get a writable database.
         WeatherDbHelper dbHelper = new WeatherDbHelper(mContext);
         SQLiteDatabase db = dbHelper.getWritableDatabase();
 
@@ -145,24 +146,24 @@ public class TestDb extends AndroidTestCase {
 
         // Third Step (Weather): Insert ContentValues into database and get a row ID back
         long weatherRowId = db.insert(WeatherContract.WeatherEntry.TABLE_NAME, null, weatherValues);
-        assertTrue((weatherRowId != -1));
+        assertTrue(weatherRowId != -1);
 
-        // Fourth Step Query the database and receive a Cursor back
+        // Fourth Step: Query the database and receive a Cursor back
         // A cursor is your primary interface to the query results.
         Cursor weatherCursor = db.query(
-                WeatherContract.WeatherEntry.TABLE_NAME, // Table to Query
+                WeatherContract.WeatherEntry.TABLE_NAME,  // Table to Query
                 null, // leaving "columns" null just returns all the columns.
                 null, // cols for "where" clause
                 null, // values for "where" clause
                 null, // columns to group by
                 null, // columns to filter by row groups
-                null // sort order
+                null  // sort order
         );
 
-        // Move the cursor to a valid database row and check to see if we have any rows
-        assertTrue("Error: No records returned from weather query", weatherCursor.moveToFirst());
+        // Move the cursor to the first valid database row and check to see if we have any rows
+        assertTrue("Error: No Records returned from location query", weatherCursor.moveToFirst());
 
-        // Fifth Step: Validate the weather Query
+        // Fifth Step: Validate the location Query
         TestUtilities.validateCurrentRecord("testInsertReadDb weatherEntry failed to validate",
                 weatherCursor, weatherValues);
 
@@ -170,10 +171,11 @@ public class TestDb extends AndroidTestCase {
         assertFalse("Error: More than one record returned from weather query",
                 weatherCursor.moveToNext());
 
-        // Sixth Step: Close the cursor and database
+        // Sixth Step: Close cursor and database
         weatherCursor.close();
-        db.close();
+        dbHelper.close();
     }
+
 
     /*
         Students: This is a helper method for the testWeatherTable quiz. You can move your
@@ -181,10 +183,9 @@ public class TestDb extends AndroidTestCase {
         testWeatherTable and testLocationTable.
      */
     public long insertLocation() {
-
         // First step: Get reference to writable database
         // If there's an error in those massive SQL table creation Strings,
-        // errors will be thrown here when you try to get a writeable database.
+        // errors will be thrown here when you try to get a writable database.
         WeatherDbHelper dbHelper = new WeatherDbHelper(mContext);
         SQLiteDatabase db = dbHelper.getWritableDatabase();
 
@@ -199,13 +200,13 @@ public class TestDb extends AndroidTestCase {
         // Verify we got a row back.
         assertTrue(locationRowId != -1);
 
-        // Data's been inserted.  In THEORY.  Now we pull some out to stare at it and verify it made
+        // Data's inserted.  IN THEORY.  Now pull some out to stare at it and verify it made
         // the round trip.
 
         // Fourth Step: Query the database and receive a Cursor back
         // A cursor is your primary interface to the query results.
         Cursor cursor = db.query(
-                WeatherContract.LocationEntry.TABLE_NAME, // Table to Query
+                WeatherContract.LocationEntry.TABLE_NAME,  // Table to Query
                 null, // all columns
                 null, // Columns for the "where" clause
                 null, // Values for the "where" clause
@@ -228,10 +229,9 @@ public class TestDb extends AndroidTestCase {
         assertFalse("Error: More than one record returned from location query",
                 cursor.moveToNext());
 
-        // 6: Finally, close the Cursor and Database
+        // Sixth Step: Close Cursor and Database
         cursor.close();
         db.close();
-
         return locationRowId;
     }
 }
